@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>小红书文案生成器</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 20px auto; padding: 20px; }
+        input, button { padding: 10px; margin: 10px 0; }
+        .result { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>小红书文案生成器</h1>
+    <input type="text" id="theme" placeholder="输入主题（如：夏日穿搭）" style="width: 300px;">
+    <button onclick="generate()">生成文案</button>
+    <div class="result" id="result"></div>
+
+    <script>
+        async function generate() {
+            const theme = document.getElementById('theme').value;
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '生成中...';
+
+            try {
+                const response = await fetch('/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `theme=${encodeURIComponent(theme)}`
+                });
+
+                const data = await response.json();
+                if (data.error) {
+                    resultDiv.innerHTML = `错误：${data.error}`;
+                } else {
+                    let html = '<h3>生成的标题：</h3>';
+                    html += '<ul>' + data.titles.map(title => `<li>${title}</li>`).join('') + '</ul>';
+                    html += '<h3>正文内容：</h3>';
+                    html += `<p>${data.content.replace(/\n/g, '<br>')}</p>`;
+                    resultDiv.innerHTML = html;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `请求失败：${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>
