@@ -4,7 +4,7 @@ from langchain.output_parsers import PydanticOutputParser
 from langchain.prompts import ChatPromptTemplate
 from xiaohongshu_model import Xiaohongshu
 
-# import os
+import os
 
 
 def generate_xiaohongshu(theme, openai_api_key):
@@ -12,8 +12,10 @@ def generate_xiaohongshu(theme, openai_api_key):
         ("system", system_template_text),
         ("user", user_template_text)
     ])
-    model = ChatOpenAI(model="gpt-3.5-turbo", api_key=openai_api_key)
-    output_parser = PydanticOutputParser(pydantic_object=Xiaohongshu)
+    model = ChatOpenAI(model="gpt-3.5-turbo",
+                       openai_api_key=os.getenv(openai_api_key),
+                       openai_api_base="https://api.aigc369.com/v1")
+    output_parser =PydanticOutputParser(pydantic_object=Xiaohongshu)
     chain = prompt | model | output_parser
     result = chain.invoke({
         "parser_instructions": output_parser.get_format_instructions(),
@@ -21,4 +23,3 @@ def generate_xiaohongshu(theme, openai_api_key):
     })
     return result
 
-# print(generate_xiaohongshu("大模型", os.getenv("OPENAI_API_KEY")))
