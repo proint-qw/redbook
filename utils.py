@@ -13,7 +13,7 @@ def generate_xiaohongshu(theme, openai_api_key):
         ("user", user_template_text)
     ])
     model = ChatOpenAI(model="gpt-3.5-turbo",
-                       openai_api_key=os.getenv(openai_api_key),
+                       openai_api_key=os.getenv("OPENAI_API_KEY"),
                        openai_api_base="https://api.aigc369.com/v1")
     output_parser =PydanticOutputParser(pydantic_object=Xiaohongshu)
     chain = prompt | model | output_parser
