@@ -3,6 +3,7 @@ from langchain_openai import ChatOpenAI
 from langchain.output_parsers import PydanticOutputParser
 from langchain.prompts import ChatPromptTemplate
 from xiaohongshu_model import Xiaohongshu
+import streamlit as st
 
 import os
 
@@ -13,7 +14,7 @@ def generate_xiaohongshu(theme, openai_api_key):
         ("user", user_template_text)
     ])
     model = ChatOpenAI(model="gpt-3.5-turbo",
-                       openai_api_key=os.getenv("OPENAI_API_KEY"),
+                       openai_api_key = st.secrets["OPENAI_API_KEY"],
                        openai_api_base="https://api.aigc369.com/v1")
     output_parser =PydanticOutputParser(pydantic_object=Xiaohongshu)
     chain = prompt | model | output_parser
